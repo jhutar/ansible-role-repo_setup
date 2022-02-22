@@ -1,0 +1,20 @@
+- name: "Use repo_setup"
+  hosts: all
+  remote_user: root
+  gather_facts: off
+  vars:
+    additional_repos_default:
+      - from_rpm: https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+        disable_gpg_check: yes
+      - from_file: https://copr.fedorainfracloud.org/coprs/g/copr/PyPI/repo/fedora-36/group_copr-PyPI-fedora-36.repo
+      - name: my-project
+        description: My project yum repository
+        baseurl: http://example.com/pub/yum/my-project/
+        gpgcheck: no
+        sslverify: no
+  tasks:
+    - name: "Deploy 3 yum repos"
+      include_role:
+        name: repo_setup
+      vars:
+        additional_repos: "{{ additional_repos_default }}"
