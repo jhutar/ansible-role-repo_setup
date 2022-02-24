@@ -15,6 +15,18 @@
     timeout: 30
     force: yes
   when: "'from_file' in item"
+  retries: 3
+  delay: 10
+  register: result
+  until: not result.failed
+  loop: "{{ additional_repos }}"
+
+- name: "Apply repos from files fixes"
+  lineinfile:
+    path: "/etc/yum.repos.d/{{ item.from_file|regex_replace('[^a-zA-Z0-9]+', '_') }}.repo"
+    regexp: "{{ item.fix_regexp }}"
+    line: "{{ item.fix_line }}"
+  when: "'from_file' in item and 'fix_regexp' in item and 'fix_line' in item"
   loop: "{{ additional_repos }}"
 
 - name: "Add repos from rpms"
@@ -23,5 +35,9 @@
     state: present
     disable_gpg_check: "{{ item.disable_gpg_check|default(False) }}"
   when: "'from_rpm' in item"
+  retries: 3
+  delay: 10
+  register: result
+  until: not result.failed
   loop: "{{ additional_repos }}"
 ...
