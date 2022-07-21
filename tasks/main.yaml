@@ -26,7 +26,7 @@
     url: "{{ item.needs_cert }}"
     dest: "/etc/pki/ca-trust/source/anchors/"
     timeout: 30
-  when: "'from_file' in item" and 'needs_cert' in item
+  when: "'from_file' in item and 'needs_cert' in item"
   retries: 3
   delay: 10
   register: result
@@ -35,7 +35,7 @@
 
 - name: "Import needed certificates from files"
   ansible.builtin.command: update-ca-trust
-  when: "'from_file' in item" and 'needs_cert' in item
+  when: "'from_file' in item and 'needs_cert' in item"
   loop: "{{ additional_repos }}"
 
 - name: "Apply repos from files fixes"
