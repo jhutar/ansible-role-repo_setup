@@ -21,6 +21,23 @@
   until: not result.failed
   loop: "{{ additional_repos }}"
 
+- name: "Get needed certificates from files"
+  ansible.builtin.get_url:
+    url: "{{ item.needs_cert }}"
+    dest: "/etc/pki/ca-trust/source/anchors/"
+    timeout: 30
+  when: "'from_file' in item" and 'needs_cert' in item
+  retries: 3
+  delay: 10
+  register: result
+  until: not result.failed
+  loop: "{{ additional_repos }}"
+
+- name: "Import needed certificates from files"
+  ansible.builtin.command: update-ca-trust
+  when: "'from_file' in item" and 'needs_cert' in item
+  loop: "{{ additional_repos }}"
+
 - name: "Apply repos from files fixes"
   lineinfile:
     path: "/etc/yum.repos.d/{{ item.from_file|regex_replace('[^a-zA-Z0-9]+', '_') }}.repo"
