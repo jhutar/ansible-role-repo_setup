@@ -45,7 +45,7 @@ of repo definitions for all the repos you want to configure. For example:
           - from_file: http://repos.example.com/repo3/repo3.repo
           # Download existing repo file and also import CA certificate
           - from_file: http://repos.example.com/repo4/repo4.repo
-            needs_cert: https://repos.example.com/ca.crt
+            needs_cert: http://repos.example.com/ca.crt
           # Download existing repo file and fix baseurl line in it
           - from_file: http://repos.example.com/repo5/repo5.repo
             fix_regexp: baseurl *= *https://example.com/repo5/
